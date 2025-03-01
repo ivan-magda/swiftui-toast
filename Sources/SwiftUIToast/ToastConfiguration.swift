@@ -20,6 +20,27 @@ public struct ToastConfiguration {
     /// Animation configuration for the toast
     public var animation: ToastAnimation
 
+    /// Creates a new toast configuration with the specified parameters
+    /// - Parameters:
+    ///   - duration: Duration in seconds the toast will be displayed
+    ///   - position: Position of the toast on the screen
+    ///   - tapToDismiss: Whether tapping the toast dismisses it
+    ///   - dismissDelay: Delay before dismissal animation starts
+    ///   - animation: Animation configuration for the toast
+    public init(
+        duration: TimeInterval = 3.0,
+        position: ToastPosition,
+        tapToDismiss: Bool = true,
+        dismissDelay: TimeInterval = 0.2,
+        animation: ToastAnimation
+    ) {
+        self.duration = duration
+        self.position = position
+        self.tapToDismiss = tapToDismiss
+        self.dismissDelay = dismissDelay
+        self.animation = animation
+    }
+
     /// Standard configuration with default animations based on position
     public static var standard: ToastConfiguration {
         ToastConfiguration(
