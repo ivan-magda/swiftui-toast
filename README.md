@@ -30,13 +30,13 @@ Add SwiftUIToast to your project by adding it as a dependency in your `Package.s
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/yourusername/SwiftUIToast.git", from: "1.0.0")
+    .package(url: "https://github.com/ivan-magda/swiftui-toast.git", from: "1.0.0")
 ]
 ```
 
 Or add it directly through Xcode:
 1. Go to File > Add Packages...
-2. Enter package repository URL: `https://github.com/yourusername/SwiftUIToast.git`
+2. Enter package repository URL: `https://github.com/ivan-magda/swiftui-toast.git`
 3. Click "Add Package"
 
 ## Usage
