@@ -1,4 +1,5 @@
 import SwiftUI
+import Observation
 
 /// Manages the queue of toast notifications to display one at a time
 ///
@@ -9,28 +10,29 @@ import SwiftUI
 /// - Managing the lifecycle of each toast
 ///
 /// You should typically create a single `ToastManager` instance and share it
-/// throughout your application as an environment object.
+/// throughout your application using the environment.
 ///
 /// ```swift
 /// @main
 /// struct MyApp: App {
-///     @StateObject private var toastManager = ToastManager()
+///     let toastManager = ToastManager()
 ///
 ///     var body: some Scene {
 ///         WindowGroup {
 ///             ContentView()
-///                 .environmentObject(toastManager)
+///                 .environment(toastManager)
 ///         }
 ///     }
 /// }
 /// ```
 @MainActor
-public class ToastManager: ObservableObject {
+@Observable
+public final class ToastManager {
     /// Maximum number of toasts that can be queued
     private let maxQueueSize: Int
 
     /// The currently displayed toast ID
-    @Published private(set) var currentToastID: String?
+    private(set) var currentToastID: String?
 
     /// Queue of toast IDs waiting to be displayed
     private var toastQueue: [String] = []

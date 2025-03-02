@@ -6,7 +6,7 @@ import SwiftUI
 /// coordinating with the `ToastManager` to ensure proper queuing and lifecycle management.
 struct ToastModifier<ToastContent: View>: ViewModifier {
     /// The toast manager responsible for queue management
-    @EnvironmentObject private var toastManager: ToastManager
+    @Environment(ToastManager.self) private var toastManager
 
     /// Unique identifier for this toast instance
     @State private var toastID = UUID().uuidString

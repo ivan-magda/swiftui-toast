@@ -1,6 +1,5 @@
 import Testing
 import SwiftUI
-import Combine
 @testable import SwiftUIToast
 
 @MainActor
@@ -31,30 +30,36 @@ struct ToastEdgeCaseTests {
         let expectation = AsyncExpectation()
 
         // Setup observation
-        var cancellable: AnyCancellable?
-        cancellable = toastManager.$currentToastID
-            .sink { value in
-                stateChanges.append(value)
-                if stateChanges.count >= 3 {
-                    expectation.fulfill()
+        func observe() {
+            withObservationTracking {
+                _ = toastManager.currentToastID
+            } onChange: {
+                Task { @MainActor in
+                    stateChanges.append(toastManager.currentToastID)
+
+                    // Once we have at least 2 changes, fulfill expectation
+                    if stateChanges.count >= 2 {
+                        expectation.fulfill()
+                    }
+
+                    observe()
                 }
             }
+        }
+        observe()
 
         // When - Enqueue and immediately dequeue
         toastManager.enqueue(id: toastID)
+        try await Task.sleep(for: .milliseconds(1)) // Wait for onChange to trigger
         toastManager.dequeue(id: toastID)
 
         // Wait for observation to complete
         await expectation.wait(timeout: .milliseconds(500))
 
-        // Then - Verify proper sequence: nil -> toastID -> nil
-        #expect(stateChanges.count >= 3)
-        #expect(stateChanges[0] == nil)
-        #expect(stateChanges[1] == toastID)
-        #expect(stateChanges[2] == nil)
-
-        // Clean up
-        cancellable?.cancel()
+        // Then - Verify proper sequence: toastID -> nil
+        #expect(stateChanges.count == 2)
+        #expect(stateChanges[0] == toastID)
+        #expect(stateChanges[1] == nil)
     }
 
     @Test("Rapid toggle doesn't cause state inconsistency")

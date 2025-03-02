@@ -43,7 +43,7 @@ struct TypedToastPreview: View {
 
 #Preview {
     TypedToastPreview()
-        .environmentObject(ToastManager())
+        .environment(ToastManager())
 }
 
 // Example custom toast for feed level up
@@ -95,7 +95,7 @@ struct CustomToastPreview: View {
 
 #Preview {
     CustomToastPreview()
-        .environmentObject(ToastManager())
+        .environment(ToastManager())
 }
 
 /// Preview of the toast queue mechanism
@@ -207,7 +207,7 @@ struct ToastPreview: View {
 
 #Preview {
     ToastPreview()
-        .environmentObject(ToastManager())
+        .environment(ToastManager())
 }
 
 /// Preview of different animation types
@@ -282,7 +282,7 @@ struct AnimatedToastExamples: View {
 
 #Preview {
     AnimatedToastExamples()
-        .environmentObject(ToastManager())
+        .environment(ToastManager())
 }
 
 #endif

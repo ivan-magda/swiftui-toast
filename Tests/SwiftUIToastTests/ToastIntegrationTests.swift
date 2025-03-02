@@ -1,7 +1,5 @@
 import Testing
 import SwiftUI
-import Combine
-import XCTest
 @testable import SwiftUIToast
 
 @MainActor
@@ -18,17 +16,23 @@ struct ToastIntegrationTests {
         // Setup observation
         let expectation = AsyncExpectation()
 
-        // Use a cancellable to track changes
-        var cancellable: AnyCancellable?
-        cancellable = toastManager.$currentToastID
-            .sink { value in
-                toastIDChanges.append(value)
+        func observe() {
+            withObservationTracking {
+                _ = toastManager.currentToastID
+            } onChange: {
+                Task { @MainActor in
+                    toastIDChanges.append(toastManager.currentToastID)
 
-                // Once we have at least 3 changes, fulfill expectation
-                if toastIDChanges.count >= 3 {
-                    expectation.fulfill()
+                    // Once we have at least 2 changes, fulfill expectation
+                    if toastIDChanges.count >= 2 {
+                        expectation.fulfill()
+                    }
+
+                    observe()
                 }
             }
+        }
+        observe()
 
         // When - Simulate toast presentation and dismissal
         toastManager.enqueue(id: toastID)
@@ -40,14 +44,10 @@ struct ToastIntegrationTests {
         // Wait for observation to complete
         await expectation.wait(timeout: .milliseconds(500))
 
-        // Then - Verify toast ID changes: nil -> toastID -> nil
-        #expect(toastIDChanges.count >= 3)
-        #expect(toastIDChanges[0] == nil)
-        #expect(toastIDChanges[1] == toastID)
-        #expect(toastIDChanges[2] == nil)
-
-        // Clean up
-        cancellable?.cancel()
+        // Then - Verify toast ID changes: toastID -> nil
+        #expect(toastIDChanges.count == 2)
+        #expect(toastIDChanges[0] == toastID)
+        #expect(toastIDChanges[1] == nil)
     }
 
     @Test("Binding updates trigger appropriate toast visibility")

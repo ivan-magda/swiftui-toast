@@ -48,16 +48,18 @@ First, add the `ToastManager` to your app:
 ```swift
 @main
 struct MyApp: App {
-    @StateObject private var toastManager = ToastManager()
+    let toastManager = ToastManager()
     
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(toastManager)
+                .environment(toastManager)
         }
     }
 }
 ```
+
+The `ToastManager` is built with Apple's Observation framework, making it efficient and easy to use throughout your SwiftUI app.
 
 ### Basic Toast
 
