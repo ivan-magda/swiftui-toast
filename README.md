@@ -42,8 +42,8 @@
 ## Requirements
 
 - iOS 17.0+ / macOS 14.0+ / tvOS 17.0+
-- Swift 5.9+
-- Xcode 15.0+
+- Swift 6.0+
+- Xcode 16.0+
 
 ## Installation
 
