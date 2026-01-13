@@ -8,6 +8,12 @@
 
 A customizable toast notification system for SwiftUI, inspired by Android's Toast component. Easily add informative, temporarily displayed messages to your SwiftUI app with beautiful animations and extensive customization options.
 
+## Demo
+
+<p align="center">
+  <img src="demo/toast-types.gif" width="200" alt="Toast Types">&nbsp;&nbsp;<img src="demo/animations.gif" width="200" alt="Animations">&nbsp;&nbsp;<img src="demo/custom.gif" width="200" alt="Custom Toasts">&nbsp;&nbsp;<img src="demo/queue.gif" width="200" alt="Queue">
+</p>
+
 ## Features
 
 - 🎨 **Predefined Types** – Info, success, and error toasts with appropriate styling
