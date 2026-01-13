@@ -7,7 +7,7 @@
 
 **Queue-managed toast notifications for modern SwiftUI.** Built on `@Observable` (iOS 17+). Toasts queue automatically - no more overlapping messages.
 
-<p align="center">
+<p align="leading">
   <img src="demo/toast-types.gif" width="200" alt="Toast Types">
   <img src="demo/animations.gif" width="200" alt="Animations">
   <img src="demo/custom.gif" width="200" alt="Custom Toasts">
