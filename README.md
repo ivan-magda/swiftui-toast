@@ -1,8 +1,10 @@
 # SwiftUIToast
 
+[![Swift](https://github.com/ivan-magda/swiftui-toast/actions/workflows/swift.yml/badge.svg)](https://github.com/username/swiftui-toast/actions/workflows/swift.yml)
+[![Swift Package Manager](https://img.shields.io/badge/Swift_Package_Manager-compatible-brightgreen.svg)](https://swift.org/package-manager/)
 [![Swift](https://img.shields.io/badge/Swift-5.5+-orange?style=flat-square)](https://img.shields.io/badge/Swift-5.5+-orange?style=flat-square)
-[![Platforms](https://img.shields.io/badge/Platforms-iOS_macOS_tvOS-yellowgreen?style=flat-square)](https://img.shields.io/badge/Platforms-iOS_macOS_tvOS-green?style=flat-square)
-[![Swift Package Manager](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Platforms](https://img.shields.io/badge/Platforms-iOS_macOS_tvOS-lightgrey.svg)](https://developer.apple.com/swift)
 
 A customizable toast notification system for SwiftUI, inspired by Android's Toast component. Easily add informative, temporarily displayed messages to your SwiftUI app with beautiful animations and extensive customization options.
 
