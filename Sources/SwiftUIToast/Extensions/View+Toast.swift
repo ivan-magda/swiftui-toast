@@ -1,28 +1,72 @@
 import SwiftUI
 
-/// Extensions that add toast functionality to any SwiftUI View
+/// View extension providing toast notification capabilities.
+///
+/// These modifiers are the primary API for displaying toasts in your app. Apply them
+/// to any view in your hierarchy where you want toasts to appear.
+///
+/// There are two variants:
+/// - ``toast(isPresented:message:type:configuration:)`` for standard styled toasts
+/// - ``toast(isPresented:configuration:content:)`` for fully custom toast content
+///
+/// Both require a ``ToastManager`` in the environment. Set this up at your app's root:
+///
+/// ```swift
+/// @main
+/// struct MyApp: App {
+///     let toastManager = ToastManager()
+///
+///     var body: some Scene {
+///         WindowGroup {
+///             ContentView()
+///                 .environment(toastManager)
+///         }
+///     }
+/// }
+/// ```
 public extension View {
-    /// Displays a toast with a predefined style
+    /// Displays a toast with standard styling and an icon based on the toast type.
     ///
-    /// This modifier attaches a toast with standard styling to the view.
+    /// This is the simplest way to show a toast. The toast automatically includes
+    /// an icon and color scheme based on the ``ToastType``.
     ///
     /// ```swift
-    /// Button("Show Toast") {
-    ///     showToast = true
+    /// struct ContentView: View {
+    ///     @State private var showSuccess = false
+    ///     @State private var showError = false
+    ///
+    ///     var body: some View {
+    ///         VStack {
+    ///             Button("Save") {
+    ///                 // ... save logic
+    ///                 showSuccess = true
+    ///             }
+    ///             .toast(isPresented: $showSuccess, message: "Saved!", type: .success)
+    ///
+    ///             Button("Delete") {
+    ///                 // ... delete logic that might fail
+    ///                 showError = true
+    ///             }
+    ///             .toast(
+    ///                 isPresented: $showError,
+    ///                 message: "Could not delete item",
+    ///                 type: .error,
+    ///                 configuration: .top
+    ///             )
+    ///         }
+    ///     }
     /// }
-    /// .toast(
-    ///     isPresented: $showToast,
-    ///     message: "Operation completed successfully!",
-    ///     type: .success
-    /// )
     /// ```
     ///
     /// - Parameters:
-    ///   - isPresented: Binding that controls whether the toast is presented
-    ///   - message: Text to display in the toast
-    ///   - type: Toast type (info, success, error)
-    ///   - configuration: Toast configuration options
-    /// - Returns: A view with the toast modifier applied
+    ///   - isPresented: A binding that controls whether the toast is visible. Set to
+    ///     `true` to show the toast; it automatically resets to `false` when dismissed.
+    ///   - message: The text message to display. Supports up to 3 lines with truncation.
+    ///   - type: The semantic type of the toast, which determines the icon and color.
+    ///     Defaults to ``ToastType/info``.
+    ///   - configuration: Customization options for timing, position, and animation.
+    ///     Defaults to ``ToastConfiguration/standard``.
+    /// - Returns: A view that can display the toast notification.
     func toast(
         isPresented: Binding<Bool>,
         message: String,
@@ -38,32 +82,46 @@ public extension View {
         )
     }
 
-    /// Displays a toast with custom content
+    /// Displays a toast with completely custom content.
     ///
-    /// This modifier attaches a toast with custom content to the view.
+    /// Use this variant when you need full control over the toast's appearance. Your
+    /// custom view receives all configured animations and behaviors automatically.
     ///
     /// ```swift
-    /// Button("Show Custom Toast") {
-    ///     showToast = true
-    /// }
-    /// .toast(isPresented: $showToast, configuration: .top) {
-    ///     HStack {
-    ///         Image(systemName: "star.fill")
-    ///             .foregroundColor(.yellow)
-    ///         Text("Custom Toast!")
-    ///             .bold()
+    /// struct ContentView: View {
+    ///     @State private var showLevelUp = false
+    ///
+    ///     var body: some View {
+    ///         GameView()
+    ///             .toast(isPresented: $showLevelUp, configuration: .bouncy(position: .top)) {
+    ///                 HStack(spacing: 12) {
+    ///                     Image(systemName: "star.fill")
+    ///                         .font(.title)
+    ///                         .foregroundStyle(.yellow)
+    ///
+    ///                     VStack(alignment: .leading) {
+    ///                         Text("Level Up!")
+    ///                             .font(.headline)
+    ///                         Text("You reached level 10")
+    ///                             .font(.subheadline)
+    ///                             .foregroundStyle(.secondary)
+    ///                     }
+    ///                 }
+    ///                 .padding()
+    ///                 .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+    ///             }
     ///     }
-    ///     .padding()
-    ///     .background(Color.black.opacity(0.8))
-    ///     .cornerRadius(10)
     /// }
     /// ```
     ///
     /// - Parameters:
-    ///   - isPresented: Binding that controls whether the toast is presented
-    ///   - configuration: Toast configuration options
-    ///   - content: Custom view builder for toast content
-    /// - Returns: A view with the toast modifier applied
+    ///   - isPresented: A binding that controls whether the toast is visible. Set to
+    ///     `true` to show the toast; it automatically resets to `false` when dismissed.
+    ///   - configuration: Customization options for timing, position, and animation.
+    ///     Defaults to ``ToastConfiguration/standard``.
+    ///   - content: A view builder that creates the toast's content. The view should
+    ///     include its own background, padding, and styling.
+    /// - Returns: A view that can display the custom toast notification.
     func toast<ToastContent: View>(
         isPresented: Binding<Bool>,
         configuration: ToastConfiguration = .standard,

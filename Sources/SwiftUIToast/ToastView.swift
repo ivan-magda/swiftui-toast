@@ -1,14 +1,29 @@
 import SwiftUI
 
-/// A standard toast notification view
+/// The default visual presentation for toast notifications.
 ///
-/// `ToastView` provides a standard appearance for toast messages with an icon,
-/// message text, and appropriate styling based on the toast type.
+/// `ToastView` renders a horizontally-stacked icon and message with platform-appropriate
+/// styling. It's used automatically when you call the message-based toast modifier:
+///
+/// ```swift
+/// .toast(isPresented: $show, message: "Saved!", type: .success)
+/// ```
+///
+/// The view adapts its appearance based on the ``ToastType``:
+/// - Icon and color are determined by the type
+/// - Background uses platform-specific system colors
+/// - Text supports up to 3 lines with truncation
+/// - Minimum touch target height of 44 points for accessibility
+///
+/// For custom toast appearances, use the content-based toast modifier instead
+/// and provide your own view.
 struct ToastView: View {
-    /// The message to display in the toast
+    /// The text message displayed in the toast.
+    ///
+    /// Long messages are automatically truncated after 3 lines with a trailing ellipsis.
     let message: String
 
-    /// The type of toast (determines styling)
+    /// The semantic type determining the icon and color scheme.
     let type: ToastType
 
     var body: some View {
@@ -40,6 +55,12 @@ struct ToastView: View {
         .accessibilityLabel("\(String(describing: type).capitalized): \(message)")
     }
 
+    /// Platform-appropriate background color for the toast.
+    ///
+    /// Returns:
+    /// - iOS/tvOS: `UIColor.tertiarySystemBackground` for subtle elevation
+    /// - macOS: `NSColor.windowBackgroundColor` for native appearance
+    /// - Other platforms: Light secondary color fallback
     private var backgroundColor: Color {
         #if canImport(UIKit)
         return Color(UIColor.tertiarySystemBackground)

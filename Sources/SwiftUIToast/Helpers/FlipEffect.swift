@@ -1,19 +1,38 @@
 import SwiftUI
 
-/// Effect modifier for 3D rotation
+/// A view modifier that applies a 3D rotation effect for flip animations.
 ///
-/// This modifier applies a 3D rotation effect to any view, allowing
-/// for animated flipping transitions along a specified axis.
+/// `FlipEffect` is used internally by ``ToastAnimation/flip(axis:duration:)`` to create
+/// the rotating entrance and exit transitions. It wraps SwiftUI's `rotation3DEffect`
+/// with a fixed perspective value optimized for toast flip animations.
+///
+/// The effect rotates the view around either the X or Y axis:
+/// - **Y-axis rotation** (horizontal flip): The view rotates like a door opening
+/// - **X-axis rotation** (vertical flip): The view rotates like a card flipping forward
+///
+/// - Note: This is an internal implementation detail. Use ``ToastAnimation/flip(axis:duration:)``
+///   to create flip animations for toasts.
 struct FlipEffect: ViewModifier {
-    /// The rotation angle in degrees
+    /// The rotation angle in degrees.
+    ///
+    /// Typically animates from 90 (perpendicular/invisible) to 0 (facing forward) for
+    /// entrance, and reverses for exit.
     var angle: Double
 
-    /// The axis of rotation as X and Y components
+    /// The rotation axis specified as X and Y components.
+    ///
+    /// Common values:
+    /// - `(x: 0, y: 1)`: Rotates around Y-axis (horizontal flip)
+    /// - `(x: 1, y: 0)`: Rotates around X-axis (vertical flip)
     var axis: (x: CGFloat, y: CGFloat)
 
-    /// Applies the 3D rotation effect to the content
-    /// - Parameter content: The view to modify
-    /// - Returns: The modified view with 3D rotation applied
+    /// Applies the 3D rotation transformation to the content.
+    ///
+    /// Uses a perspective value of 0.3 for a subtle but visible 3D effect.
+    /// The rotation is anchored at the center of the view.
+    ///
+    /// - Parameter content: The view to rotate.
+    /// - Returns: The view with 3D rotation applied.
     func body(content: Content) -> some View {
         content
             .rotation3DEffect(
