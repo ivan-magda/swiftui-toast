@@ -235,7 +235,7 @@ struct ToastConfigurationTests {
 
         #expect(config.duration == 3.0)
     }
-    
+
     @Test("Init uses default tapToDismiss of true")
     func testDefaultTapToDismiss() {
         let config = ToastConfiguration(
