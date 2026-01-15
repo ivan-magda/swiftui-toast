@@ -38,13 +38,15 @@ SwiftUIToast is a toast notification library for SwiftUI with queue management a
 
 ### Platform Requirements
 
-- Swift 6.0+ (with Swift 5 compatibility)
+- Swift 6.0+ (strict concurrency)
 - iOS 17.0+, macOS 14.0+, tvOS 17.0+
-- Xcode 15.0+
+- Xcode 16.0+
 
 ### Testing
 
-Tests use Apple's `Testing` framework (not XCTest). Test files are in `Tests/SwiftUIToastTests/` with `AsyncExpectation.swift` providing test utilities for async operations.
+Tests use Apple's `Testing` framework (not XCTest). Test files are in `Tests/SwiftUIToastTests/` with `AsyncExpectation.swift` providing:
+- `AsyncExpectation` actor for async test synchronization
+- `ToastObserver` class for Swift 6 compatible observation tracking
 
 ## Code Style
 
