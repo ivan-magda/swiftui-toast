@@ -61,7 +61,7 @@ struct ToastEdgeCaseTests {
         let toastManager = ToastManager()
 
         toastManager.enqueue(id: "")
-        #expect(toastManager.currentToastID == "")
+        #expect(toastManager.currentToastID?.isEmpty == true)
 
         toastManager.dequeue(id: "")
         #expect(toastManager.currentToastID == nil)
@@ -127,22 +127,15 @@ struct ToastEdgeCaseTests {
         var stateChanges: [String?] = []
         let expectation = AsyncExpectation()
 
-        func observe() {
-            withObservationTracking {
-                _ = toastManager.currentToastID
-            } onChange: {
-                Task { @MainActor in
-                    stateChanges.append(toastManager.currentToastID)
-
-                    if stateChanges.count >= 2 {
-                        expectation.fulfill()
-                    }
-
-                    observe()
-                }
-            }
+        let observer = ToastObserver(
+            toastManager: toastManager,
+            onChangeCount: 2
+        ) { currentID in
+            stateChanges.append(currentID)
+        } onComplete: {
+            await expectation.fulfill()
         }
-        observe()
+        observer.startObserving()
 
         toastManager.enqueue(id: toastID)
         try await Task.sleep(for: .milliseconds(1))

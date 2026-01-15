@@ -128,16 +128,15 @@ struct ToastPreview: View {
                         showInfoToast = true
 
                         // Delay to make the test more visible
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        Task {
+                            try? await Task.sleep(for: .milliseconds(500))
                             showSuccessToast = true
 
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                showErrorToast = true
+                            try? await Task.sleep(for: .milliseconds(500))
+                            showErrorToast = true
 
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                    showCustomToast = true
-                                }
-                            }
+                            try? await Task.sleep(for: .milliseconds(500))
+                            showCustomToast = true
                         }
                     }
                 }
