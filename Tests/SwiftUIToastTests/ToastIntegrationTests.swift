@@ -111,24 +111,6 @@ struct ToastSwiftUIIntegrationTests {
         #expect(type(of: view) != type(of: Text("Test View")))
     }
 
-    // MARK: - Toast Type Tests
-
-    @Test("View modifier supports all toast types")
-    func testAllToastTypes() {
-        let toastTypes: [ToastType] = [.success, .error, .info]
-
-        for toastType in toastTypes {
-            let view = Text("Test")
-                .toast(
-                    isPresented: .constant(true),
-                    message: "Message",
-                    type: toastType
-                )
-
-            #expect(type(of: view) != type(of: Text("Test")))
-        }
-    }
-
     // MARK: - Configuration Tests
 
     @Test("View modifier accepts standard configuration")

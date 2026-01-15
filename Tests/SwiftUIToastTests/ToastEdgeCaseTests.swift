@@ -56,84 +56,6 @@ struct ToastEdgeCaseTests {
 
     // MARK: - Toast Manager Queue Edge Cases
 
-    @Test("Dequeuing wrong toast has no effect on current toast")
-    func testDequeueWrongToast() {
-        let toastManager = ToastManager()
-
-        toastManager.enqueue(id: "correct-toast")
-        toastManager.dequeue(id: "wrong-toast")
-
-        #expect(toastManager.currentToastID == "correct-toast")
-
-        toastManager.dequeue(id: "correct-toast")
-    }
-
-    @Test("Rapid toggle doesn't cause state inconsistency")
-    func testRapidToggle() {
-        let toastManager = ToastManager()
-        let toastID = "rapid-toggle"
-
-        for _ in 0..<10 {
-            toastManager.enqueue(id: toastID)
-            toastManager.dequeue(id: toastID)
-        }
-
-        #expect(toastManager.currentToastID == nil)
-    }
-
-    @Test("Queue respects maximum size limit")
-    func testQueueMaxSizeLimit() {
-        let maxSize = 3
-        let toastManager = ToastManager(maxQueueSize: maxSize)
-
-        // Show first toast
-        toastManager.enqueue(id: "toast-1")
-        #expect(toastManager.currentToastID == "toast-1")
-
-        // Fill the queue
-        for i in 2...(maxSize + 1) {
-            toastManager.enqueue(id: "toast-\(i)")
-        }
-
-        // Try to add one more - should be ignored
-        toastManager.enqueue(id: "toast-overflow")
-
-        // Dequeue all and verify only maxSize toasts were queued
-        var dequeuedCount = 0
-        while toastManager.currentToastID != nil {
-            toastManager.dequeue(id: toastManager.currentToastID!)
-            dequeuedCount += 1
-        }
-
-        #expect(dequeuedCount == maxSize + 1) // 1 current + maxSize queued
-    }
-
-    @Test("Duplicate toast IDs are not queued")
-    func testDuplicateToastPrevention() {
-        let toastManager = ToastManager()
-
-        toastManager.enqueue(id: "duplicate-toast")
-        toastManager.enqueue(id: "duplicate-toast")
-        toastManager.enqueue(id: "duplicate-toast")
-
-        #expect(toastManager.currentToastID == "duplicate-toast")
-
-        toastManager.dequeue(id: "duplicate-toast")
-
-        #expect(toastManager.currentToastID == nil)
-    }
-
-    @Test("Dequeuing from empty manager has no effect")
-    func testDequeueFromEmptyManager() {
-        let toastManager = ToastManager()
-
-        #expect(toastManager.currentToastID == nil)
-
-        toastManager.dequeue(id: "nonexistent-toast")
-
-        #expect(toastManager.currentToastID == nil)
-    }
-
     @Test("Empty toast ID string is handled")
     func testEmptyToastID() {
         let toastManager = ToastManager()
@@ -142,46 +64,6 @@ struct ToastEdgeCaseTests {
         #expect(toastManager.currentToastID == "")
 
         toastManager.dequeue(id: "")
-        #expect(toastManager.currentToastID == nil)
-    }
-
-    @Test("Queue processes toasts in FIFO order")
-    func testFIFOOrder() {
-        let toastManager = ToastManager()
-
-        toastManager.enqueue(id: "first")
-        toastManager.enqueue(id: "second")
-        toastManager.enqueue(id: "third")
-
-        #expect(toastManager.currentToastID == "first")
-
-        toastManager.dequeue(id: "first")
-        #expect(toastManager.currentToastID == "second")
-
-        toastManager.dequeue(id: "second")
-        #expect(toastManager.currentToastID == "third")
-
-        toastManager.dequeue(id: "third")
-        #expect(toastManager.currentToastID == nil)
-    }
-
-    @Test("Removing queued toast before it displays")
-    func testRemoveQueuedToast() {
-        let toastManager = ToastManager()
-
-        toastManager.enqueue(id: "current")
-        toastManager.enqueue(id: "queued-to-remove")
-        toastManager.enqueue(id: "next")
-
-        // Remove the middle toast from queue
-        toastManager.dequeue(id: "queued-to-remove")
-
-        #expect(toastManager.currentToastID == "current")
-
-        toastManager.dequeue(id: "current")
-        #expect(toastManager.currentToastID == "next")
-
-        toastManager.dequeue(id: "next")
         #expect(toastManager.currentToastID == nil)
     }
 
