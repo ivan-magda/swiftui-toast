@@ -4,10 +4,22 @@ import Testing
 
 struct ToastAnimationTests {
 
+    // MARK: - FlipEffect Tests
+
+    @Test("FlipEffect exposes angle as animatableData")
+    @MainActor
+    func flipEffectAnimatableData() {
+        var effect = FlipEffect(angle: 90, axis: (x: 0, y: 1))
+        #expect(effect.animatableData == 90)
+
+        effect.animatableData = 45
+        #expect(effect.angle == 45)
+    }
+
     // MARK: - Slide Animation Tests
 
     @Test("Slide animation supports all edge directions")
-    func testSlideAnimationEdges() {
+    func slideAnimationEdges() {
         let edges: [Edge] = [.top, .bottom, .leading, .trailing]
 
         for edge in edges {
@@ -17,13 +29,13 @@ struct ToastAnimationTests {
     }
 
     @Test("Slide animation uses default duration of 0.35 seconds")
-    func testSlideAnimationDefaultDuration() {
+    func slideAnimationDefaultDuration() {
         let animation = ToastAnimation.slide(edge: .bottom)
         #expect(type(of: animation.animation) == Animation.self)
     }
 
     @Test("Slide animation accepts custom duration")
-    func testSlideAnimationCustomDuration() {
+    func slideAnimationCustomDuration() {
         let durations: [TimeInterval] = [0.1, 0.5, 1.0, 2.0]
 
         for duration in durations {
@@ -35,13 +47,13 @@ struct ToastAnimationTests {
     // MARK: - Fade Animation Tests
 
     @Test("Fade animation uses default duration")
-    func testFadeAnimationDefault() {
+    func fadeAnimationDefault() {
         let animation = ToastAnimation.fade()
         #expect(type(of: animation.transition) == AnyTransition.self)
     }
 
     @Test("Fade animation accepts custom duration")
-    func testFadeAnimationCustomDuration() {
+    func fadeAnimationCustomDuration() {
         let animation = ToastAnimation.fade(duration: 1.0)
         #expect(type(of: animation.animation) == Animation.self)
     }
@@ -49,13 +61,13 @@ struct ToastAnimationTests {
     // MARK: - Scale Animation Tests
 
     @Test("Scale animation uses default scale of 0.8")
-    func testScaleAnimationDefault() {
+    func scaleAnimationDefault() {
         let animation = ToastAnimation.scale()
         #expect(type(of: animation.transition) == AnyTransition.self)
     }
 
     @Test("Scale animation accepts custom scale values")
-    func testScaleAnimationCustomScale() {
+    func scaleAnimationCustomScale() {
         let scaleValues: [CGFloat] = [0.1, 0.5, 0.8, 1.0]
 
         for scale in scaleValues {
@@ -65,47 +77,61 @@ struct ToastAnimationTests {
     }
 
     @Test("Scale animation accepts custom duration")
-    func testScaleAnimationCustomDuration() {
+    func scaleAnimationCustomDuration() {
         let animation = ToastAnimation.scale(scale: 0.5, duration: 0.8)
         #expect(type(of: animation.animation) == Animation.self)
+    }
+
+    @Test("Scale animation uses symmetric transition")
+    func scaleAnimationSymmetricTransition() {
+        let animation = ToastAnimation.scale(scale: 0.5)
+        #expect(type(of: animation.transition) == AnyTransition.self)
     }
 
     // MARK: - Bounce Animation Tests
 
     @Test("Bounce animation uses spring physics")
-    func testBounceAnimation() {
+    func bounceAnimation() {
         let animation = ToastAnimation.bounce()
         #expect(type(of: animation.animation) == Animation.self)
     }
 
     @Test("Bounce animation accepts custom duration")
-    func testBounceAnimationCustomDuration() {
+    func bounceAnimationCustomDuration() {
         let animation = ToastAnimation.bounce(duration: 1.0)
         #expect(type(of: animation.animation) == Animation.self)
+    }
+
+    @Test("Bounce animation with different durations produces different animations")
+    func bounceAnimationDurationDifference() {
+        let fast = ToastAnimation.bounce(duration: 0.2)
+        let slow = ToastAnimation.bounce(duration: 2.0)
+        #expect(type(of: fast.animation) == Animation.self)
+        #expect(type(of: slow.animation) == Animation.self)
     }
 
     // MARK: - Flip Animation Tests
 
     @Test("Flip animation supports horizontal axis")
-    func testFlipAnimationHorizontal() {
+    func flipAnimationHorizontal() {
         let animation = ToastAnimation.flip(axis: .horizontal)
         #expect(type(of: animation.transition) == AnyTransition.self)
     }
 
     @Test("Flip animation supports vertical axis")
-    func testFlipAnimationVertical() {
+    func flipAnimationVertical() {
         let animation = ToastAnimation.flip(axis: .vertical)
         #expect(type(of: animation.transition) == AnyTransition.self)
     }
 
     @Test("Flip animation uses horizontal axis by default")
-    func testFlipAnimationDefaultAxis() {
+    func flipAnimationDefaultAxis() {
         let animation = ToastAnimation.flip()
         #expect(type(of: animation.transition) == AnyTransition.self)
     }
 
     @Test("Flip animation accepts custom duration")
-    func testFlipAnimationCustomDuration() {
+    func flipAnimationCustomDuration() {
         let animation = ToastAnimation.flip(axis: .horizontal, duration: 0.8)
         #expect(type(of: animation.animation) == Animation.self)
     }
@@ -113,7 +139,7 @@ struct ToastAnimationTests {
     // MARK: - Slide With Bounce Animation Tests
 
     @Test("Slide with bounce animation supports all edges")
-    func testSlideWithBounceEdges() {
+    func slideWithBounceEdges() {
         let edges: [Edge] = [.top, .bottom, .leading, .trailing]
 
         for edge in edges {
@@ -123,7 +149,7 @@ struct ToastAnimationTests {
     }
 
     @Test("Slide with bounce animation accepts custom duration")
-    func testSlideWithBounceCustomDuration() {
+    func slideWithBounceCustomDuration() {
         let animation = ToastAnimation.slideWithBounce(edge: .bottom, duration: 1.0)
         #expect(type(of: animation.animation) == Animation.self)
     }
@@ -131,7 +157,7 @@ struct ToastAnimationTests {
     // MARK: - Custom Animation Tests
 
     @Test("Custom animation can be created with specific animation and transition")
-    func testCustomAnimation() {
+    func customAnimation() {
         let customAnimation = ToastAnimation(
             animation: .spring(duration: 0.5),
             transition: .asymmetric(
@@ -145,7 +171,7 @@ struct ToastAnimationTests {
     }
 
     @Test("Custom animation properties can be modified")
-    func testCustomAnimationModification() {
+    func customAnimationModification() {
         var animation = ToastAnimation.fade()
 
         // Modify animation
@@ -159,7 +185,7 @@ struct ToastAnimationTests {
     // MARK: - All Animation Types
 
     @Test("All preset animation types can be created successfully")
-    func testAllAnimationTypes() {
+    func allAnimationTypes() {
         let animations: [ToastAnimation] = [
             .slide(edge: .bottom),
             .slide(edge: .top),
