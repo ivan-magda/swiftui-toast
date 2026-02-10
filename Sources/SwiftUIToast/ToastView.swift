@@ -32,7 +32,7 @@ struct ToastView: View {
             spacing: LayoutInsets.smallInset
         ) {
             Image(systemName: type.icon)
-                .foregroundColor(type.iconColor)
+                .foregroundStyle(type.iconColor)
 
             Text(message)
                 .lineLimit(3)

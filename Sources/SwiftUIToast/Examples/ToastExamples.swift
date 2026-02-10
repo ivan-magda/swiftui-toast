@@ -53,7 +53,7 @@ struct FeedLevelUpToastView: View {
     var body: some View {
         HStack {
             Image(systemName: "arrow.up.circle.fill")
-                .foregroundColor(.green)
+                .foregroundStyle(.green)
 
             Text("Level up! You reached level \(level)")
                 .bold()
@@ -63,7 +63,7 @@ struct FeedLevelUpToastView: View {
             RoundedRectangle(cornerRadius: 10)
                 .fill(Color.black.opacity(0.8))
         )
-        .foregroundColor(.white)
+        .foregroundStyle(.white)
     }
 }
 
@@ -180,7 +180,7 @@ struct ToastPreview: View {
                         .frame(width: 40, height: 40)
                         .overlay(
                             Image(systemName: "star.fill")
-                                .foregroundColor(.white)
+                                .foregroundStyle(.white)
                         )
 
                     VStack(alignment: .leading, spacing: 4) {
@@ -189,7 +189,7 @@ struct ToastPreview: View {
 
                         Text("This is a completely custom toast")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
