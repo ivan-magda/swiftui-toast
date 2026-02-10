@@ -8,47 +8,47 @@ struct ToastEdgeCaseTests {
     // MARK: - Message Edge Cases
 
     @Test("Empty toast message creates valid view")
-    func testEmptyToastMessage() {
+    func emptyToastMessage() {
         let view = ToastView(message: "", type: .info)
         #expect(type(of: view) == ToastView.self)
     }
 
     @Test("Single character message creates valid view")
-    func testSingleCharacterMessage() {
+    func singleCharacterMessage() {
         let view = ToastView(message: "!", type: .success)
         #expect(type(of: view) == ToastView.self)
     }
 
     @Test("Very long message is handled properly")
-    func testVeryLongToastMessage() {
+    func veryLongToastMessage() {
         let longMessage = String(repeating: "This is a very long toast message. ", count: 100)
         let view = ToastView(message: longMessage, type: .info)
         #expect(type(of: view) == ToastView.self)
     }
 
     @Test("Message with special characters is handled")
-    func testSpecialCharactersMessage() {
+    func specialCharactersMessage() {
         let specialMessage = "🎉 Success! <script>alert('xss')</script> & \"quotes\" 'apostrophes'"
         let view = ToastView(message: specialMessage, type: .success)
         #expect(type(of: view) == ToastView.self)
     }
 
     @Test("Message with newlines is handled")
-    func testNewlinesMessage() {
+    func newlinesMessage() {
         let multilineMessage = "Line 1\nLine 2\nLine 3\nLine 4"
         let view = ToastView(message: multilineMessage, type: .info)
         #expect(type(of: view) == ToastView.self)
     }
 
     @Test("Message with only whitespace is handled")
-    func testWhitespaceOnlyMessage() {
+    func whitespaceOnlyMessage() {
         let whitespaceMessage = "   \t\n   "
         let view = ToastView(message: whitespaceMessage, type: .info)
         #expect(type(of: view) == ToastView.self)
     }
 
     @Test("Unicode message is handled")
-    func testUnicodeMessage() {
+    func unicodeMessage() {
         let unicodeMessage = "日本語テスト العربية עברית 中文测试"
         let view = ToastView(message: unicodeMessage, type: .info)
         #expect(type(of: view) == ToastView.self)
@@ -57,7 +57,7 @@ struct ToastEdgeCaseTests {
     // MARK: - Toast Manager Queue Edge Cases
 
     @Test("Empty toast ID string is handled")
-    func testEmptyToastID() {
+    func emptyToastID() {
         let toastManager = ToastManager()
 
         toastManager.enqueue(id: "")
@@ -70,7 +70,7 @@ struct ToastEdgeCaseTests {
     // MARK: - Configuration Edge Cases
 
     @Test("Zero duration configuration is valid")
-    func testZeroDurationConfiguration() {
+    func zeroDurationConfiguration() {
         let config = ToastConfiguration(
             duration: 0,
             position: .bottom,
@@ -81,7 +81,7 @@ struct ToastEdgeCaseTests {
     }
 
     @Test("Very long duration configuration is valid")
-    func testVeryLongDurationConfiguration() {
+    func veryLongDurationConfiguration() {
         let config = ToastConfiguration(
             duration: 3600, // 1 hour
             position: .top,
@@ -92,7 +92,7 @@ struct ToastEdgeCaseTests {
     }
 
     @Test("Negative dismiss delay doesn't crash")
-    func testNegativeDismissDelay() {
+    func negativeDismissDelay() {
         let config = ToastConfiguration(
             duration: 3.0,
             position: .bottom,
@@ -105,7 +105,7 @@ struct ToastEdgeCaseTests {
     }
 
     @Test("Zero dismiss delay is valid")
-    func testZeroDismissDelay() {
+    func zeroDismissDelay() {
         let config = ToastConfiguration(
             duration: 3.0,
             position: .bottom,
@@ -149,7 +149,7 @@ struct ToastEdgeCaseTests {
     }
 
     @Test("Multiple toasts enqueued rapidly are processed correctly")
-    func testRapidEnqueue() async throws {
+    func rapidEnqueue() async throws {
         let toastManager = ToastManager()
 
         // Rapidly enqueue multiple toasts
@@ -172,7 +172,7 @@ struct ToastEdgeCaseTests {
     // MARK: - Toast Type Edge Cases
 
     @Test("All toast types create valid views")
-    func testAllToastTypes() {
+    func allToastTypes() {
         let types: [ToastType] = [.success, .error, .info]
 
         for toastType in types {
@@ -182,14 +182,14 @@ struct ToastEdgeCaseTests {
     }
 
     @Test("Toast type icon properties are accessible")
-    func testToastTypeIcons() {
+    func toastTypeIcons() {
         #expect(ToastType.success.icon == "checkmark.circle.fill")
         #expect(ToastType.error.icon == "exclamationmark.circle.fill")
         #expect(ToastType.info.icon == "info.circle.fill")
     }
 
     @Test("Toast type colors are accessible")
-    func testToastTypeColors() {
+    func toastTypeColors() {
         #expect(ToastType.success.iconColor == .green)
         #expect(ToastType.error.iconColor == .red)
         #expect(ToastType.info.iconColor == .accentColor)
