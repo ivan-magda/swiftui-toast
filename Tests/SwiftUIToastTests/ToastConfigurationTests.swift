@@ -6,7 +6,7 @@ struct ToastConfigurationTests {
     // MARK: - Standard Configuration Tests
 
     @Test("Standard configuration has expected default values")
-    func testStandardConfiguration() {
+    func standardConfiguration() {
         let config = ToastConfiguration.standard
 
         #expect(config.position == .bottom)
@@ -16,7 +16,7 @@ struct ToastConfigurationTests {
     }
 
     @Test("Standard configuration uses slide animation")
-    func testStandardConfigurationAnimation() {
+    func standardConfigurationAnimation() {
         let config = ToastConfiguration.standard
         #expect(type(of: config.animation) == ToastAnimation.self)
     }
@@ -24,7 +24,7 @@ struct ToastConfigurationTests {
     // MARK: - Positional Configuration Tests
 
     @Test("Top configuration has correct position and animation")
-    func testTopConfiguration() {
+    func topConfiguration() {
         let config = ToastConfiguration.top
 
         #expect(config.position == .top)
@@ -33,7 +33,7 @@ struct ToastConfigurationTests {
     }
 
     @Test("Bottom configuration has correct position and animation")
-    func testBottomConfiguration() {
+    func bottomConfiguration() {
         let config = ToastConfiguration.bottom
 
         #expect(config.position == .bottom)
@@ -42,7 +42,7 @@ struct ToastConfigurationTests {
     }
 
     @Test("Top and bottom configurations have different positions")
-    func testPositionalDifference() {
+    func positionalDifference() {
         let topConfig = ToastConfiguration.top
         let bottomConfig = ToastConfiguration.bottom
 
@@ -52,7 +52,7 @@ struct ToastConfigurationTests {
     // MARK: - Animation Preset Tests
 
     @Test("Bouncy configuration uses bounce animation")
-    func testBouncyConfiguration() {
+    func bouncyConfiguration() {
         let config = ToastConfiguration.bouncy()
 
         #expect(config.position == .bottom)
@@ -60,7 +60,7 @@ struct ToastConfigurationTests {
     }
 
     @Test("Bouncy configuration accepts custom position")
-    func testBouncyConfigurationWithPosition() {
+    func bouncyConfigurationWithPosition() {
         let topBouncy = ToastConfiguration.bouncy(position: .top)
         let bottomBouncy = ToastConfiguration.bouncy(position: .bottom)
 
@@ -69,7 +69,7 @@ struct ToastConfigurationTests {
     }
 
     @Test("Fade configuration uses fade animation")
-    func testFadeConfiguration() {
+    func fadeConfiguration() {
         let config = ToastConfiguration.fade()
 
         #expect(config.position == .bottom)
@@ -77,7 +77,7 @@ struct ToastConfigurationTests {
     }
 
     @Test("Fade configuration accepts custom position")
-    func testFadeConfigurationWithPosition() {
+    func fadeConfigurationWithPosition() {
         let topFade = ToastConfiguration.fade(position: .top)
         let bottomFade = ToastConfiguration.fade(position: .bottom)
 
@@ -86,7 +86,7 @@ struct ToastConfigurationTests {
     }
 
     @Test("Flip configuration uses flip animation")
-    func testFlipConfiguration() {
+    func flipConfiguration() {
         let config = ToastConfiguration.flip()
 
         #expect(config.position == .bottom)
@@ -94,7 +94,7 @@ struct ToastConfigurationTests {
     }
 
     @Test("Flip configuration accepts custom position")
-    func testFlipConfigurationWithPosition() {
+    func flipConfigurationWithPosition() {
         let topFlip = ToastConfiguration.flip(position: .top)
         let bottomFlip = ToastConfiguration.flip(position: .bottom)
 
@@ -105,7 +105,7 @@ struct ToastConfigurationTests {
     // MARK: - With Animation Helper Tests
 
     @Test("With animation helper creates configuration with custom animation")
-    func testWithAnimationHelper() {
+    func withAnimationHelper() {
         let config = ToastConfiguration.with(animation: .scale())
 
         #expect(config.position == .bottom) // Inherits from standard
@@ -113,7 +113,7 @@ struct ToastConfigurationTests {
     }
 
     @Test("With animation helper preserves other standard defaults")
-    func testWithAnimationPreservesDefaults() {
+    func withAnimationPreservesDefaults() {
         let config = ToastConfiguration.with(animation: .bounce())
 
         #expect(config.duration == 3.0)
@@ -124,7 +124,7 @@ struct ToastConfigurationTests {
     // MARK: - Custom Configuration Tests
 
     @Test("Custom configuration preserves all properties")
-    func testCustomConfiguration() {
+    func customConfiguration() {
         let config = ToastConfiguration(
             duration: 5.0,
             position: .top,
@@ -140,7 +140,7 @@ struct ToastConfigurationTests {
     }
 
     @Test("Custom configuration with minimum values")
-    func testCustomConfigurationMinimumValues() {
+    func customConfigurationMinimumValues() {
         let config = ToastConfiguration(
             duration: 0,
             position: .bottom,
@@ -155,7 +155,7 @@ struct ToastConfigurationTests {
     }
 
     @Test("Custom configuration with large values")
-    func testCustomConfigurationLargeValues() {
+    func customConfigurationLargeValues() {
         let config = ToastConfiguration(
             duration: 3600,
             position: .top,
@@ -171,7 +171,7 @@ struct ToastConfigurationTests {
     // MARK: - Configuration Mutability Tests
 
     @Test("Configuration properties can be modified")
-    func testConfigurationMutability() {
+    func configurationMutability() {
         var config = ToastConfiguration.standard
 
         config.duration = 10.0
@@ -187,7 +187,7 @@ struct ToastConfigurationTests {
     }
 
     @Test("Modifying one configuration doesn't affect another")
-    func testConfigurationIndependence() {
+    func configurationIndependence() {
         var config1 = ToastConfiguration.standard
         let config2 = ToastConfiguration.standard
 
@@ -200,7 +200,7 @@ struct ToastConfigurationTests {
     // MARK: - All Animation Types Tests
 
     @Test("All preset configurations create valid configurations")
-    func testAllPresetConfigurations() {
+    func allPresetConfigurations() {
         let configs: [ToastConfiguration] = [
             .standard,
             .top,
@@ -227,7 +227,7 @@ struct ToastConfigurationTests {
     // MARK: - Default Parameter Tests
 
     @Test("Init uses default duration of 3.0")
-    func testDefaultDuration() {
+    func defaultDuration() {
         let config = ToastConfiguration(
             position: .bottom,
             animation: .fade()
@@ -237,7 +237,7 @@ struct ToastConfigurationTests {
     }
 
     @Test("Init uses default tapToDismiss of true")
-    func testDefaultTapToDismiss() {
+    func defaultTapToDismiss() {
         let config = ToastConfiguration(
             position: .bottom,
             animation: .fade()
@@ -247,7 +247,7 @@ struct ToastConfigurationTests {
     }
 
     @Test("Init uses default dismissDelay of 0.2")
-    func testDefaultDismissDelay() {
+    func defaultDismissDelay() {
         let config = ToastConfiguration(
             position: .bottom,
             animation: .fade()
