@@ -78,7 +78,10 @@ struct ToastModifier<ToastContent: View>: ViewModifier {
                 }
             }
             .onChange(of: toastManager.currentToastID) { _, newValue in
-                isVisible = newValue == toastID
+                let shouldBeVisible = newValue == toastID
+                if isVisible != shouldBeVisible {
+                    isVisible = shouldBeVisible
+                }
             }
             .overlay(alignment: configuration.position.alignment) {
                 if isVisible {
