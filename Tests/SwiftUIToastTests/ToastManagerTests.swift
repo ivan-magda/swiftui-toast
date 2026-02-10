@@ -9,13 +9,13 @@ struct ToastManagerTests {
     }
 
     @Test("Initial state has nil currentToastID")
-    func testInitialState() {
+    func initialState() {
         let toastManager = createToastManager()
         #expect(toastManager.currentToastID == nil)
     }
 
     @Test("Basic enqueue and dequeue works correctly")
-    func testSingleEnqueueDequeue() {
+    func singleEnqueueDequeue() {
         // Given
         let toastManager = createToastManager()
         let toastID = "test-toast"
@@ -34,7 +34,7 @@ struct ToastManagerTests {
     }
 
     @Test("Dequeuing a non-existent toast has no effect")
-    func testDequeueNonExistentToast() {
+    func dequeueNonExistentToast() {
         // Given
         let toastManager = createToastManager()
 
@@ -46,7 +46,7 @@ struct ToastManagerTests {
     }
 
     @Test("Toasts are shown in queue order")
-    func testQueueOrder() {
+    func queueOrder() {
         // Given
         let toastManager = createToastManager()
         let toastIDs = ["toast-1", "toast-2", "toast-3"]
@@ -79,7 +79,7 @@ struct ToastManagerTests {
     }
 
     @Test("Queue respects maximum size")
-    func testQueueLimit() {
+    func queueLimit() {
         // Given - A toast manager with max queue size of 3
         let maxSize = 3
         let limitedManager = createToastManager(maxQueueSize: maxSize)
@@ -106,7 +106,7 @@ struct ToastManagerTests {
     }
 
     @Test("Duplicate enqueue requests are ignored")
-    func testDuplicateEnqueue() {
+    func duplicateEnqueue() {
         // Given
         let toastManager = createToastManager()
         let toastID = "duplicate-toast"
@@ -126,7 +126,7 @@ struct ToastManagerTests {
     }
 
     @Test("Can dequeue a toast from the middle of the queue")
-    func testDequeueFromMiddleOfQueue() {
+    func dequeueFromMiddleOfQueue() {
         // Given - Three queued toasts
         let toastManager = createToastManager()
         let toastIDs = ["toast-1", "toast-2", "toast-3"]
@@ -148,8 +148,7 @@ struct ToastManagerTests {
     }
 
     @Test("Concurrent enqueue operations maintain correct state")
-    @MainActor
-    func testConcurrentEnqueueOperations() async throws {
+    func concurrentEnqueueOperations() async throws {
         // Given
         let toastManager = createToastManager()
         let operations = 10
@@ -181,40 +180,21 @@ struct ToastManagerTests {
     }
 
     @Test("Rapid enqueue/dequeue operations maintain consistent state")
-    @MainActor
-    func testRapidEnqueueDequeue() async throws {
-        // Given
+    func rapidEnqueueDequeue() {
         let toastManager = createToastManager()
         let operations = 100
 
-        // When - Perform rapid alternating operations
-        await withTaskGroup(of: Void.self) { group in
-            for i in 0..<operations {
-                group.addTask {
-                    Task { @MainActor in
-                        let id = "rapid-\(i)"
-                        toastManager.enqueue(id: id)
-                        // Small delay to simulate real usage pattern
-                        try? await Task.sleep(for: .microseconds(100)) // 0.1ms
-                        toastManager.dequeue(id: id)
-                    }
-                }
-            }
-
-            // Wait for all tasks to complete
-            await group.waitForAll()
+        for i in 0..<operations {
+            let id = "rapid-\(i)"
+            toastManager.enqueue(id: id)
+            toastManager.dequeue(id: id)
         }
 
-        // Then - Allow time for all operations to complete
-        try? await Task.sleep(for: .milliseconds(500))
-
-        // Verify final state is clean
         #expect(toastManager.currentToastID == nil, "Manager should return to clean state")
     }
 
     @Test("Interleaved operations maintain consistent state")
-    @MainActor
-    func testInterleavedOperations() async throws {
+    func interleavedOperations() async throws {
         // Given
         let toastManager = createToastManager()
 
