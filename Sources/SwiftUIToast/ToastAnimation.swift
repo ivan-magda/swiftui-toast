@@ -120,10 +120,7 @@ public struct ToastAnimation {
     ) -> ToastAnimation {
         ToastAnimation(
             animation: .spring(duration: duration),
-            transition: .asymmetric(
-                insertion: AnyTransition.scale(scale: scale).combined(with: .opacity),
-                removal: AnyTransition.scale(scale: scale).combined(with: .opacity)
-            )
+            transition: AnyTransition.scale(scale: scale).combined(with: .opacity)
         )
     }
 
@@ -145,16 +142,11 @@ public struct ToastAnimation {
     ///   the actual animation time. Defaults to 0.5.
     /// - Returns: A configured `ToastAnimation` with spring-driven scale transition.
     ///
-    /// - Note: The spring uses `mass: 1.0`, `stiffness: 100.0`, `damping: 10` for
-    ///   a noticeable but controlled bounce effect.
+    /// - Note: Uses `spring(duration:bounce:)` with bounce of 0.5 for a noticeable
+    ///   but controlled overshoot effect.
     public static func bounce(duration: TimeInterval = 0.5) -> ToastAnimation {
         ToastAnimation(
-            animation: .interpolatingSpring(
-                mass: 1.0,
-                stiffness: 100.0,
-                damping: 10,
-                initialVelocity: 0
-            ),
+            animation: .spring(duration: duration, bounce: 0.5),
             transition: AnyTransition.scale.combined(with: .opacity)
         )
     }
@@ -219,19 +211,14 @@ public struct ToastAnimation {
     ///     animation time. Defaults to 0.5.
     /// - Returns: A configured `ToastAnimation` with spring-driven slide transition.
     ///
-    /// - Note: Uses slightly higher damping (12) than ``bounce(duration:)`` for a
+    /// - Note: Uses a lower bounce value (0.4) than ``bounce(duration:)`` for a
     ///   more controlled settle when combined with directional motion.
     public static func slideWithBounce(
         edge: Edge,
         duration: TimeInterval = 0.5
     ) -> ToastAnimation {
         ToastAnimation(
-            animation: .interpolatingSpring(
-                mass: 1.0,
-                stiffness: 100.0,
-                damping: 12,
-                initialVelocity: 0
-            ),
+            animation: .spring(duration: duration, bounce: 0.4),
             transition: AnyTransition.move(edge: edge).combined(with: .opacity)
         )
     }
