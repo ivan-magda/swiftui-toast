@@ -120,28 +120,29 @@ struct ToastEdgeCaseTests {
     // MARK: - Async Behavior Tests
 
     @Test("Dismissing during animation maintains proper state")
-    func testDismissDuringAnimation() async throws {
+    func dismissDuringAnimation() async throws {
         let toastManager = ToastManager()
         let toastID = "animation-toast"
 
         var stateChanges: [String?] = []
-        let expectation = AsyncExpectation()
 
-        let observer = ToastObserver(
-            toastManager: toastManager,
-            onChangeCount: 2
-        ) { currentID in
-            stateChanges.append(currentID)
-        } onComplete: {
-            await expectation.fulfill()
+        try await confirmation { confirm in
+            let observer = ToastObserver(
+                toastManager: toastManager,
+                onChangeCount: 2
+            ) { currentID in
+                stateChanges.append(currentID)
+            } onComplete: {
+                confirm()
+            }
+            observer.startObserving()
+
+            toastManager.enqueue(id: toastID)
+            try await Task.sleep(for: .milliseconds(1))
+            toastManager.dequeue(id: toastID)
+
+            try await Task.sleep(for: .milliseconds(500))
         }
-        observer.startObserving()
-
-        toastManager.enqueue(id: toastID)
-        try await Task.sleep(for: .milliseconds(1))
-        toastManager.dequeue(id: toastID)
-
-        await expectation.wait(timeout: .milliseconds(500))
 
         #expect(stateChanges.count == 2)
         #expect(stateChanges[0] == toastID)
