@@ -1,11 +1,11 @@
 # SwiftUIToast
 
+*Queue-managed toast notifications for SwiftUI, built on `@Observable` (iOS 17+).*
+
 [![CI](https://github.com/ivan-magda/swiftui-toast/actions/workflows/swift.yml/badge.svg)](https://github.com/ivan-magda/swiftui-toast/actions/workflows/swift.yml)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fivan-magda%2Fswiftui-toast%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/ivan-magda/swiftui-toast)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fivan-magda%2Fswiftui-toast%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/ivan-magda/swiftui-toast)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-
-**Queue-managed toast notifications for modern SwiftUI.** Built on `@Observable` (iOS 17+). Toasts queue automatically - no more overlapping messages.
 
 <p align="leading">
   <img src="demo/toast-types.gif" width="200" alt="Toast Types">
@@ -14,32 +14,41 @@
   <img src="demo/queue.gif" width="200" alt="Queue Management">
 </p>
 
-## Why SwiftUIToast?
+## Table of Contents
 
-| | SwiftUIToast | AlertToast |
-|---|:---:|:---:|
-| Architecture | `@Observable` | `@Published` (Combine) |
-| Toast Queue | ✅ Built-in, automatic | ❌ Manual |
-| Min iOS | 17.0 | 13.0 |
-| Swift 6 | ✅ Full concurrency support | ⚠️ Partial |
-| Strict Sendable | ✅ | ❌ |
+- [Background](#background)
+- [Philosophy](#philosophy)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Project Structure](#project-structure)
+- [Contributing](#contributing)
+- [License](#license)
 
-**Choose SwiftUIToast if:** You're targeting iOS 17+ and want modern SwiftUI patterns without Combine boilerplate.
+## Background
 
-**Choose AlertToast if:** You need iOS 13–16 support.
+Fire several toasts in quick succession and most SwiftUI implementations stack them on top of each other, leaving the user with a pile of overlapping messages. SwiftUIToast routes every toast through a single `ToastManager` that shows them one at a time in first-in, first-out order. Trigger five at once and they play back as a clean sequence.
+
+The library targets iOS 17 and later, so it builds on `@Observable` and `@MainActor` rather than Combine. It compiles under Swift 6 strict concurrency.
+
+## Philosophy
+
+- **One manager, shared through the environment.** A single `ToastManager` owns the queue. You inject it once at the app root and call the `.toast()` modifier anywhere below.
+- **Bindings drive presentation.** You toggle a `Bool` binding to show a toast; it flips back to `false` on dismiss. No imperative show/hide calls to keep in sync.
+- **Presets first, full control when you need it.** Common cases are one-liners (`.success`, `.top`, `.bouncy()`). The full `ToastConfiguration` initializer is there when you want to set duration, position, and animation yourself.
 
 ## Features
 
-- **3 toast types** — `.info`, `.success`, `.error` with semantic styling
-- **Automatic queue** — Fire 5 toasts at once; they display sequentially (max 10 in queue, configurable)
-- **6 animation presets** — `.slide`, `.fade`, `.scale`, `.bounce`, `.flip`, `.slideWithBounce`
-- **Custom content** — Any SwiftUI view as toast content
-- **Auto-dismiss** — Configurable duration (default 2s)
-- **Tap-to-dismiss** — Optional, enabled by default
-- **Top or bottom** — Position toasts where you need them
-- **VoiceOver ready** — Proper accessibility labels and traits
+- **Automatic queue** — toasts display sequentially, never overlapping. The queue holds 10 by default and is configurable.
+- **Three semantic types** — `.info`, `.success`, and `.error`, each with its own SF Symbol and color.
+- **Custom content** — pass any SwiftUI view as the toast body via a `@ViewBuilder` modifier.
+- **Six animation presets** — `slide`, `fade`, `scale`, `bounce`, `flip`, and `slideWithBounce`, or build your own from any `Animation` and `AnyTransition`.
+- **Auto-dismiss** — configurable duration, 3 seconds by default.
+- **Tap-to-dismiss** — on by default, with a short configurable delay before the exit animation.
+- **Top or bottom placement** — position toasts where they fit your layout.
+- **VoiceOver support** — toasts carry accessibility labels and traits.
 
-## Requirements
+### Requirements
 
 - iOS 17.0+ / macOS 14.0+ / tvOS 17.0+
 - Swift 6.0+
@@ -47,19 +56,37 @@
 
 ## Installation
 
-Add to your `Package.swift`:
+### Xcode
+
+Open **File → Add Package Dependencies**, paste the repository URL, and add the `SwiftUIToast` library to your target:
+
+```
+https://github.com/ivan-magda/swiftui-toast.git
+```
+
+### Package.swift
+
+Add the package to your `dependencies` and list `SwiftUIToast` as a target dependency:
 
 ```swift
 dependencies: [
     .package(url: "https://github.com/ivan-magda/swiftui-toast.git", from: "1.2.0")
+],
+targets: [
+    .target(
+        name: "YourTarget",
+        dependencies: [
+            .product(name: "SwiftUIToast", package: "swiftui-toast")
+        ]
+    )
 ]
 ```
 
-Or in Xcode: File → Add Package Dependencies → paste the URL.
+## Usage
 
-## Quick Start
+### Set up the manager
 
-### 1. Add ToastManager to your app
+Create one `ToastManager` at the app root and inject it into the environment:
 
 ```swift
 import SwiftUI
@@ -68,7 +95,7 @@ import SwiftUIToast
 @main
 struct MyApp: App {
     @State private var toastManager = ToastManager()
-    
+
     var body: some Scene {
         WindowGroup {
             ContentView()
@@ -78,12 +105,14 @@ struct MyApp: App {
 }
 ```
 
-### 2. Show a toast
+### Show a toast
+
+Bind the modifier to a `Bool` and set it to `true`. The toast appears and resets the binding when it dismisses:
 
 ```swift
 struct ContentView: View {
     @State private var showToast = false
-    
+
     var body: some View {
         Button("Save") {
             showToast = true
@@ -93,27 +122,20 @@ struct ContentView: View {
 }
 ```
 
-That's it. The toast auto-dismisses after 2 seconds.
-
-## Usage
-
-### Predefined Types
+### Semantic types
 
 ```swift
-// Info (default blue)
-.toast(isPresented: $show, message: "Syncing...", type: .info)
-
-// Success (green checkmark)
-.toast(isPresented: $show, message: "Done!", type: .success)
-
-// Error (red X)
-.toast(isPresented: $show, message: "Failed", type: .error)
+.toast(isPresented: $show, message: "Syncing…", type: .info)     // accent-colored info icon
+.toast(isPresented: $show, message: "Done!", type: .success)     // green checkmark
+.toast(isPresented: $show, message: "Upload failed", type: .error) // red exclamation
 ```
 
-### Custom Content
+### Custom content
+
+Use the `@ViewBuilder` variant when you need full control over the toast body. Supply your own background and padding:
 
 ```swift
-.toast(isPresented: $show, configuration: .top) {
+.toast(isPresented: $show, configuration: .bouncy(position: .top)) {
     HStack(spacing: 8) {
         Image(systemName: "star.fill")
             .foregroundStyle(.yellow)
@@ -126,7 +148,7 @@ That's it. The toast auto-dismisses after 2 seconds.
 }
 ```
 
-### Animation Presets
+### Animation presets
 
 ```swift
 .toast(isPresented: $show, message: "Bounce!", configuration: .bouncy())
@@ -134,15 +156,19 @@ That's it. The toast auto-dismisses after 2 seconds.
 .toast(isPresented: $show, message: "Flip!", configuration: .flip())
 ```
 
-### Full Configuration
+Each preset also takes an optional `position`, for example `.fade(position: .top)`.
+
+### Full configuration
+
+`ToastConfiguration` exposes every knob. Set `duration: 0` to disable auto-dismiss:
 
 ```swift
 let config = ToastConfiguration(
-    duration: 3.0,           // seconds (0 = no auto-dismiss)
-    position: .top,          // .top or .bottom
+    duration: 4.0,
+    position: .top,
     tapToDismiss: true,
-    dismissDelay: 0.2,       // delay before dismiss animation
-    animation: .bounce()
+    dismissDelay: 0.2,
+    animation: .slideWithBounce(edge: .top)
 )
 
 .toast(
@@ -153,17 +179,22 @@ let config = ToastConfiguration(
 )
 ```
 
-### Queue Management
+To swap only the animation and keep the other defaults, use `.with(animation:)`:
 
-Multiple toasts queue automatically:
+```swift
+.toast(isPresented: $show, message: "Hello", configuration: .with(animation: .scale()))
+```
+
+### Queue management
+
+Multiple toasts queue on their own. Trigger them together and they play in order:
 
 ```swift
 struct ContentView: View {
-    @Environment(ToastManager.self) private var toastManager
     @State private var toast1 = false
     @State private var toast2 = false
     @State private var toast3 = false
-    
+
     var body: some View {
         Button("Show 3 Toasts") {
             toast1 = true
@@ -177,9 +208,13 @@ struct ContentView: View {
 }
 ```
 
-Toasts display one at a time, in order. Queue holds up to 10 by default.
+Raise the limit for high-frequency scenarios by passing `maxQueueSize` when you create the manager:
 
-## Configuration Presets
+```swift
+@State private var toastManager = ToastManager(maxQueueSize: 25)
+```
+
+### Configuration presets
 
 | Preset | Position | Animation |
 |--------|----------|-----------|
@@ -190,18 +225,36 @@ Toasts display one at a time, in order. Queue holds up to 10 by default.
 | `.fade()` | bottom | fade |
 | `.flip()` | bottom | flip |
 
-## Documentation
+Full API documentation lives on the [Swift Package Index](https://swiftpackageindex.com/ivan-magda/swiftui-toast/documentation/swiftuitoast).
 
-Full API documentation available at [Swift Package Index](https://swiftpackageindex.com/ivan-magda/swiftui-toast/documentation/swiftuitoast).
+## Project Structure
+
+```
+Sources/SwiftUIToast/
+├── ToastManager.swift          # @Observable queue, displays toasts one at a time
+├── ToastConfiguration.swift    # Duration, position, animation, and presets
+├── ToastAnimation.swift        # Six animation presets plus custom factory
+├── ToastType.swift             # .info / .success / .error styling
+├── ToastPosition.swift         # Top or bottom placement
+├── ToastView.swift             # Default styled toast view
+├── ToastModifier.swift         # Visibility, timing, and dismiss handling
+├── LayoutInsets.swift          # Safe-area padding
+├── Extensions/
+│   └── View+Toast.swift        # The .toast(…) modifiers
+├── Helpers/
+│   └── FlipEffect.swift        # 3D rotation used by .flip
+└── Examples/
+    └── ToastExamples.swift     # SwiftUI previews
+```
 
 ## Contributing
 
-Issues and PRs welcome. Please:
+Issues and pull requests are welcome.
 
-1. Check existing issues first
-2. Include reproduction steps for bugs
-3. Run `swiftlint --strict` before submitting PRs
+1. Search existing issues before opening a new one.
+2. Include reproduction steps for bug reports.
+3. Run `swiftlint --strict` and `swift test` before submitting a pull request.
 
 ## License
 
-MIT. See [LICENSE](LICENSE) for details.
+Released under the MIT License. See [LICENSE](LICENSE) for the full text.
