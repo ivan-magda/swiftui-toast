@@ -1,11 +1,11 @@
 # SwiftUIToast
 
-*Queue-managed toast notifications for SwiftUI, built on `@Observable` (iOS 17+).*
-
 [![CI](https://github.com/ivan-magda/swiftui-toast/actions/workflows/swift.yml/badge.svg)](https://github.com/ivan-magda/swiftui-toast/actions/workflows/swift.yml)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fivan-magda%2Fswiftui-toast%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/ivan-magda/swiftui-toast)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fivan-magda%2Fswiftui-toast%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/ivan-magda/swiftui-toast)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+*Queue-managed toast notifications for SwiftUI, built on `@Observable` (iOS 17+).*
 
 <p align="leading">
   <img src="demo/toast-types.gif" width="200" alt="Toast Types">
